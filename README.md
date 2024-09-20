@@ -7,7 +7,7 @@ This repository contains the code related to the paper
 
 *Preprint*: [arxiv:2409.01115](https://arxiv.org/pdf/2409.01115)
 
-> <div align="justify">This article presents a new approach based on MiniRocket, called SelF-Rocket, for fast time series classification (TSC). Unlike existing approaches based on random convolution kernels, it dynamically selects the best couple of input representations and pooling operator during the training process. SelF-Rocket achieves state-of-the-art accuracy on the University of California Riverside (UCR) TSC benchmark datasets.</div>
+> <div align="justify">This article presents a new approach based on MiniRocket, called SelF-Rocket (Selected Features Rocket), for fast time series classification (TSC). Unlike existing approaches based on random convolution kernels, it dynamically selects the best couple of input representations and pooling operator during the training process. SelF-Rocket achieves state-of-the-art accuracy on the University of California Riverside (UCR) TSC benchmark datasets.</div>
 
 ## Reference
 Please cite:
