@@ -25,7 +25,7 @@ Please cite:
 
 ## Results
 
-SelF-Rocket is as accurate as Hydra-MultiRocket and HIVE-COTE v2.0, despite having only one type of feature, and also has a relatively shorter classifier training time.
+SelF-Rocket has been evaluated on the UCR archive. Results show it is as accurate as Hydra-MultiRocket and HIVE-COTE v2.0, despite having only one type of feature, relatively faster than Hydra-MultiRocket in term of training time and as fast as MiniRockect is term of prediction time.
 
 ### Comparison of SelF-Rocket and other SOTA methods performance (critical difference diagram)
 
