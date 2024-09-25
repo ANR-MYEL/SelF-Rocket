@@ -1,21 +1,13 @@
-#====================================================================================================
+#==================================================================================
 #===
-#=== Mouhamadou Mansour Lo, Gildas Morvan, Mathieu Rossi, Fabrice Morganti, David Mercier
+#=== Source of the Sensitivity Analysis experiments, containing the main procedure.
 #===
-#=== Time series classification with random convolution kernels based transforms: pooling operators and input representations matter
-#===
-#=== https://arxiv.org/pdf/2409.01115
-#===
-#=== Source of SelF-Rocket.
-#===
-#=== v1.0.0 - 2024/09/19 - Included the dataset name selection option
+#=== v1.0.0 - 2024/06/27 - Included the dataset name selection option
 #===                       Changed the name of various existing options
 #===                       Removed the rdt otion
 #===
-#=== 
-#=== 
-#====================================================================================================
-
+#==================================================================================
+#
 import argparse
 import os
 import time
@@ -174,10 +166,9 @@ if __name__ == '__main__':
                     vect_acc_kf[num_kfold*k + l] = accuracy
             select_time.append(time.time()-start)
 
-        accuracy_tab = [np.mean(matr_acc[i,num_kfold*num_resamples*v:num_kfold*num_resamples*v+num_kfold*num_resamples]) for v in range(15)]
-        ind_max = accuracy_tab.index(max(accuracy_tab))
-        tab_rs_acc = []
-        for j in tqdm(range(num_resamples)):
+            accuracy_tab = [np.mean(matr_acc[i,num_kfold*num_resamples*v:num_kfold*num_resamples*v+num_kfold*num_resamples]) for v in range(15)]
+            ind_max = accuracy_tab.index(max(accuracy_tab))
+            tab_rs_acc = []
             
             y_train,pooling_op,k_fold,scaler,parameters1,parameters2 = generate_FV_train(data_path,dst,num_kfold,num_features_pk)
             y_test,pooling_op_t = generate_FV_test(data_path,dst,num_features_pk,scaler,parameters1,parameters2)
