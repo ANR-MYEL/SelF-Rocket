@@ -136,7 +136,7 @@ if __name__ == '__main__':
         classif_train_time = []
         classif_test_time = []
         select_time = []
-
+        tab_rs_acc = []
         for j in tqdm(range(num_resamples)):
 
             start = time.time()
@@ -168,7 +168,6 @@ if __name__ == '__main__':
 
             accuracy_tab = [np.mean(matr_acc[i,num_kfold*num_resamples*v:num_kfold*num_resamples*v+num_kfold*num_resamples]) for v in range(15)]
             ind_max = accuracy_tab.index(max(accuracy_tab))
-            tab_rs_acc = []
             
             y_train,pooling_op,k_fold,scaler,parameters1,parameters2 = generate_FV_train(data_path,dst,num_kfold,num_features_pk)
             y_test,pooling_op_t = generate_FV_test(data_path,dst,num_features_pk,scaler,parameters1,parameters2)
