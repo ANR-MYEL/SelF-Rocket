@@ -1,13 +1,20 @@
-#==================================================================================
+#====================================================================================================
 #===
-#=== Source of the Sensitivity Analysis experiments, containing the main procedure.
+#=== Mouhamadou Mansour Lo, Gildas Morvan, Mathieu Rossi, Fabrice Morganti, David Mercier
 #===
-#=== v1.0.0 - 2024/06/27 - Included the dataset name selection option
+#=== Time series classification with random convolution kernels based transforms: pooling operators and input representations matter
+#===
+#=== https://arxiv.org/pdf/2409.01115
+#===
+#=== Source of SelF-Rocket.
+#===
+#=== v1.0.0 - 2024/09/19 - Included the dataset name selection option
 #===                       Changed the name of various existing options
 #===                       Removed the rdt otion
 #===
-#==================================================================================
-#
+#=== 
+#=== 
+#==
 import argparse
 import os
 import time
@@ -126,7 +133,7 @@ if __name__ == '__main__':
 
     all_datasets_acc  = []
     all_datasets_time  = []
-    matr_acc = np.zeros((len(datasets), num_kfold * num_resamples * 15), dtype=np.float32)
+  
 
     for i in range(len(datasets)):
 
@@ -138,7 +145,7 @@ if __name__ == '__main__':
         select_time = []
         tab_rs_acc = []
         for j in tqdm(range(num_resamples)):
-
+            matr_acc = np.zeros((len(datasets), num_kfold * num_resamples * 15), dtype=np.float32)
             start = time.time()
             y_train,pooling_op,k_fold,scaler,parameters1,parameters2 = generate_FV_train(data_path,dst,num_kfold,num_features_pk)
             crea_time.append(time.time()-start)
