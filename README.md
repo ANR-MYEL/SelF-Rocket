@@ -72,7 +72,6 @@ Examples:
 > py performance_self_rocket.py -df "../datasets_UCR_resamp_tsv/" -dn "Adiac" -fpc 9996 -k 3
  
 ``` 
-For a UCR dataset, [performance_self_rocket](./code/performance_self_rocket.py) will initially identify the optimal combination across the 30 resamples. Subsequently, the features generated with the selected IR-PO combination are used to train a classifier for each resample.   
 
 
 The mean performance (over 30 resamples) of SelF-Rocket (k = 2, f = 9996) on the 112 selected UCR datasets.
