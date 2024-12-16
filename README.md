@@ -64,9 +64,9 @@ Examples:
 > py main_ucr112_HSR.py -df "../datasets_UCR_resamp_tsv/" -k 2 -nr 10
  
 ``` 
-This will generate three files : a main file containing the mean accuracy over 30 resamples for each dataset, a second file containing the accuracy for each resample for all datasets and a third file containing the selected IR-PO for each resample and dataset.
+This will generate three files : a main file containing the mean accuracy over 30 resamples for each dataset (e.g. [Mean_perf_SR_k2_nr10](./results/Mean_perf_SR_k2_nr10.csv), [Mean_perf_HSR_k2_nr10](./results/Mean_perf_HSR_k2_nr10.csv)), a second file containing the accuracy for each resample for all datasets (e.g. [Perf_rsmpl_SR_k2_nr10](./results/Perf_rsmpl_SR_k2_nr10.csv), [Perf_rsmpl_HSR_k2_nr10](./results/Perf_rsmpl_HSR_k2_nr10.csv)) and a third file containing the selected IR-PO for each resample and dataset (e.g. [IR_PO_rsmpl_SR_k2_nr10](./results/IR_PO_rsmpl_SR_k2_nr10.csv), [IR_PO_rsmpl_HSR_k2_nr10](./results/IR_PO_rsmpl_HSR_k2_nr10.csv)).
 
-The mean performance (over 30 resamples) of SelF-Rocket & Hydra SelF-Rocket (k = 2, f = 5000, r = 10) on the 112 selected UCR datasets.
+The mean performance (over 30 resamples) of SelF-Rocket & Hydra SelF-Rocket (k = 2, f = 5000, nr = 10) on the 112 selected UCR datasets.
 
 | dataset                        | SelF-Rocket MEAN ACCURACY | Hydra SelF-Rocket MEAN ACCURACY | MINIROCKET MEAN ACCURACY |
 |--------------------------------|---------------------------|---------------------------------|--------------------------|
@@ -188,7 +188,7 @@ The mean performance (over 30 resamples) of SelF-Rocket & Hydra SelF-Rocket (k =
 ```python
 from self_rocket import SelFRocket
 
-# The shape could be (num_examples,lenght_ts) or (num_examples,1,lenght_ts)
+# The shape could be (num_examples,ts_length) or (num_examples,1,ts_length)
 
 X_train, y_train = ...
 X_test, y_test = ...
@@ -202,7 +202,7 @@ y_pred = model.predict(X_test)
 ```python
 from hydra_self_rocket import HydraSelFRocket
 
-# The shape could be (num_examples,lenght_ts) or (num_examples,1,lenght_ts)
+# The shape could be (num_examples,ts_length) or (num_examples,1,ts_length)
 
 X_train, y_train = ...
 X_test, y_test = ...
