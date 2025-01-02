@@ -1,3 +1,5 @@
+# 12/28/2024 version of https://github.com/angus924/hydra/blob/main/code/hydra.py
+#
 # Angus Dempster, Daniel F Schmidt, Geoffrey I Webb
 
 # HYDRA: Competing Convolutional Kernels for Fast and Accurate Time Series Classification

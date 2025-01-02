@@ -1,20 +1,21 @@
-#====================================================================================================
-#===
-#=== Mouhamadou Mansour Lo, Gildas Morvan, Mathieu Rossi, Fabrice Morganti, David Mercier
-#===
-#=== Time series classification with random convolution kernels based transforms: pooling operators and input representations matter
-#===
-#=== https://arxiv.org/pdf/2409.01115
-#===
-#=== Source of Hydra-SelFRocket.
-#===
-#=== v3.0.0 - 2024/12/10 - Corrected version of Hydra-SelFRocket
-#===                       
-#===                   
-#===
-#=== 
-#=== 
-#====================================================================================================
+#====================================================================================================#
+#===                                                                                              ===#
+#=== Mouhamadou Mansour Lo, Gildas Morvan, Mathieu Rossi, Fabrice Morganti, David Mercier         ===#
+#===                                                                                              ===#
+#=== Time series classification with random convolution kernels based transforms:                 ===#
+#=== pooling operators and input representations matter                                           ===#
+#===                                                                                              ===#
+#=== https://arxiv.org/pdf/2409.01115                                                             ===#
+#===                                                                                              ===#
+#=== Source of Hydra SelF-Rocket.                                                                 ===#
+#===                                                                                              ===#
+#=== v2.1.0 - 01/27/2025 - Version of Hydra SelF-Rocket                                           ===#
+#===                                                                                              ===#
+#===                                                                                              ===#
+#===                                                                                              ===#
+#===                                                                                              ===#
+#===                                                                                              ===#
+#====================================================================================================#
 
 
 import random
@@ -28,36 +29,58 @@ from sklearn.preprocessing import StandardScaler
 
 from hydra import Hydra,SparseScaler
 from features_generator import fit,transform
-from hm_voting_system import highest_median_voting
 import warnings
 # TODO : Remove this filter to have better error outputs
 warnings.filterwarnings("ignore")
 
+def highest_median_voting(ballots, candidates):
+    scores = {candidate: [] for candidate in candidates}
+    medians = {}
+    
+    for ballot in ballots:
+        for candidate, score in ballot.items():
+            if candidate in candidates:
+                scores[candidate].append(score)
+
+    for candidate, candidate_scores in scores.items():
+        if candidate_scores:
+            medians[candidate] = np.median(candidate_scores)
+        else:
+            medians[candidate] = 0 
+            
+    winner = max(medians, key=medians.get)
+    return winner
+
 def from_vect_to_ballots(pooling_names,vect_acc,vect_names):
-    num_elect = int(len(vect_acc)/len(pooling_names))
-    ballots_vect_acc = [vect_acc[i*15:i*15+15] for i in range(num_elect)]
-    ballots_vect_names = [vect_names[i*15:i*15+15] for i in range(num_elect)]
+    nb_comb = len(pooling_names)
+    num_vot = int(len(vect_acc)/nb_comb)
+    ballots_vect_acc = [vect_acc[i*nb_comb:i*nb_comb+nb_comb]
+                         for i in range(num_vot)]
+    ballots_vect_names = [vect_names[i*nb_comb:i*nb_comb+nb_comb]
+                         for i in range(num_vot)]
     bllts = []
-    for i in range(num_elect):
+    for i in range(num_vot):
         keys = ballots_vect_names[i]
         values = ballots_vect_acc[i]
         res = dict(map(lambda i,j : (i,j) , keys,values))
         bllts.append(res)
     return bllts
 
-def is_max_value(liste,comb_acc,top_value):
+def is_in_top_values(liste,comb_acc,top):
     rt_value = None
     sorted_list = sorted(liste,reverse=True)
-    rt_value = 1 if comb_acc>= sorted_list[top_value-1] else 0
+    rt_value = 1 if comb_acc>= sorted_list[top-1] else 0
     return rt_value
 
-def voting_system_threshold(pooling_names,vect_acc,idx_chosen_comb,top,prct):
+def voting_system_threshold(pooling_names,vect_acc,idx_chosen_comb,idx_default,top,prct):
     idx = None
-    num_elect = int(len(vect_acc)/len(pooling_names))
-    ballots_vect_acc = [vect_acc[i*15:i*15+15] for i in range(num_elect)]
-    count_max = [is_max_value(ballots_vect_acc[j],
-                ballots_vect_acc[j][idx_chosen_comb],top) for j in range(num_elect)]
-    idx = idx_chosen_comb if np.mean(count_max)*100 >= prct else 10
+    nb_comb = len(pooling_names)
+    num_vot = int(len(vect_acc)/nb_comb)
+    ballots_vect_acc = [vect_acc[i*nb_comb:i*nb_comb+nb_comb]
+                         for i in range(num_vot)]
+    count_max = [is_in_top_values(ballots_vect_acc[j],
+                ballots_vect_acc[j][idx_chosen_comb],top) for j in range(num_vot)]
+    idx = idx_chosen_comb if np.mean(count_max)*100 >= prct else idx_default
     return idx
 
 
@@ -66,14 +89,16 @@ class HydraSelFRocket:
     def __init__(
         self,
         num_runs = 10,
-        num_kfold = 2
+        num_features_pc = 5000,
+        only_MIX = False
     ): 
-        self.name = "Hydra-SelFRocket"
-        self.num_features_pk = 5
-        self.num_features_pc =  5000
-        self.szmxdst = 500
+        self.name = "Hydra SelF-Rocket"
+        self.num_features_pc =  num_features_pc
         self.num_runs = num_runs
-        self.num_kfold = num_kfold
+        self.only_MIX = only_MIX
+        self.mxszdst = 500
+        self.num_kfold = 2
+        self.num_features_pk = 5
         self.topvt = 5
         self.vot_threshold = 90
         self.classifier = RidgeClassifierCV(alphas = np.logspace(-3, 3, 10))
@@ -82,7 +107,8 @@ class HydraSelFRocket:
         self.parameters1 = None
         self.parameters2 = None
         self.hydra = None
-        self.selected_comb = -1
+        self.selected_comb_po = None
+        self.selected_comb_num = -1
 
     def transform_h(self,X,train=True):
         X = np.squeeze(X)
@@ -126,15 +152,15 @@ class HydraSelFRocket:
         return pooling_op,X_transform
     
     def features_selection(self,X_training_transform,y_train,pooling_op,pooling_names):
-        if len(y_train) >= self.szmxdst:
+        if len(y_train) >= self.mxszdst:
             skf = StratifiedShuffleSplit(n_splits=self.num_kfold*self.num_runs,
-                                         train_size=int(self.szmxdst/2),test_size=int(self.szmxdst/2))
+                                         train_size=int(self.mxszdst/2),test_size=int(self.mxszdst/2))
         else:
             skf = RepeatedStratifiedKFold(n_splits=self.num_kfold,n_repeats=self.num_runs)
         k_fold = skf.split(X_training_transform,y_train)
-        compt = 0
-        vect_name_kf =  [None]*(self.num_runs*self.num_kfold*15)
-        vect_acc_hmvs  = np.zeros((self.num_runs*self.num_kfold*15), dtype=np.float32)
+        nb_comb = len(pooling_names)
+        vect_name_hmvs =  [None]*(self.num_runs*self.num_kfold*nb_comb)
+        vect_acc_hmvs  = np.zeros((self.num_runs*self.num_kfold*nb_comb), dtype=np.float32)
         for l,(train_index, test_index) in enumerate(k_fold):
             for k in range(len(pooling_op)):
                 feature_idx = random.sample(range(0,pooling_op[k].shape[1]),self.num_features_pc)
@@ -146,22 +172,30 @@ class HydraSelFRocket:
                 classifier.fit(features, y_train_kfold)
                 y_pred = classifier.predict(features_t)
                 accuracy = accuracy_score(y_test_kfold, y_pred)
-                vect_acc_hmvs[compt*15 + k] = accuracy
-                vect_name_kf[compt*15 + k] = pooling_names[k]
-            compt += 1
-        ballots_hmvs = from_vect_to_ballots(pooling_names,vect_acc_hmvs,vect_name_kf)
-        po_max_hmvs = highest_median_voting(ballots_hmvs, pooling_names)
-        return po_max_hmvs,vect_acc_hmvs
+                vect_acc_hmvs[l*nb_comb + k] = accuracy
+                vect_name_hmvs[l*nb_comb + k] = pooling_names[k]
+        return vect_acc_hmvs,vect_name_hmvs
     
     def fit(self,X_train,y_train):
         pooling_names = ["PPV","GMP","MPV","MIPV","LSPV","PPV_DIFF","GMP_DIFF","MPV_DIFF",
-                        "MIPV_DIFF","LSPV_DIFF","PPV_MIX","GMP_MIX","MPV_MIX","MIPV_MIX","LSPV_MIX"]
-        pooling_names_to_num = dict(map(lambda i,j : (i,j) , pooling_names,range(0,15)))
+                        "MIPV_DIFF","LSPV_DIFF","PPV_MIX","GMP_MIX","MPV_MIX","MIPV_MIX","LSPV_MIX"]          
         pooling_op,X_training_transform = self.transform_sr(X_train)
-        po_max_hmvs,vect_acc_hmvs = self.features_selection(X_training_transform,y_train,pooling_op,pooling_names)
+        if self.only_MIX == True:
+            idx_only_MIX = [10,11,12,13,14]
+            pooling_names = [pooling_names[i] for i in idx_only_MIX]
+            pooling_op = [pooling_op[i] for i in idx_only_MIX]
+            self.topvt = 2
+        pooling_names_to_num = dict(map(lambda i,j : (i,j) , pooling_names,range(0,len(pooling_names)))) 
+        vect_acc_hmvs,vect_name_hmvs = self.features_selection(X_training_transform,
+                                                               y_train,pooling_op,pooling_names)
+        ballots_hmvs = from_vect_to_ballots(pooling_names,vect_acc_hmvs,vect_name_hmvs)
+        po_max_hmvs = highest_median_voting(ballots_hmvs, pooling_names)
         ind_max_hmvs = pooling_names_to_num[po_max_hmvs]
-        idx_fin = voting_system_threshold(pooling_names,vect_acc_hmvs,ind_max_hmvs,self.topvt,self.vot_threshold)
-        self.selected_comb = idx_fin
+        ind_def = pooling_names_to_num["PPV_MIX"]
+        idx_fin = voting_system_threshold(pooling_names,vect_acc_hmvs,ind_max_hmvs,ind_def,
+                                          self.topvt,self.vot_threshold)
+        self.selected_comb_num = idx_fin
+        self.selected_comb_po = pooling_names[idx_fin]
         features_train_sr = pooling_op[idx_fin]
         X_training_transform_h = self.transform_h(X_train)
         features_train = torch.cat((X_training_transform_h,torch.from_numpy(features_train_sr)),1)
@@ -170,13 +204,12 @@ class HydraSelFRocket:
 
     def predict(self,X_test):
         pooling_op_t = self.transform_sr(X_test,False)[0]
-        features_test_sr = pooling_op_t[self.selected_comb]
+        if self.only_MIX == True:
+            idx_only_MIX = [10,11,12,13,14]
+            pooling_op_t = [pooling_op_t[i] for i in idx_only_MIX]
+        features_test_sr = pooling_op_t[self.selected_comb_num]
         X_test_transform_h = self.transform_h(X_test,False)
         features_test = torch.cat((X_test_transform_h,torch.from_numpy(features_test_sr)),1)
         features_test = self.scaler_h.transform(features_test)
         yhat = self.classifier.predict(features_test)
         return yhat
-
-
-
-

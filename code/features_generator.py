@@ -1,15 +1,12 @@
+# Modified version of https://github.com/ChangWeiTan/MultiRocket/blob/main/multirocket/multirocket.py
+#
 # Chang Wei Tan, Angus Dempster, Christoph Bergmeir, Geoffrey I Webb
 #
 # MultiRocket: Multiple pooling operators and transformations for fast and effective time series classification
 # https://arxiv.org/abs/2102.00457
 
-import time
-
 import numpy as np
 from numba import njit, prange
-from sklearn.linear_model import RidgeClassifierCV
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
 
 @njit("float32[:](float64[:,:],int32[:],int32[:],float32[:])",
       fastmath=True, parallel=False, cache=True)
