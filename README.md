@@ -3,19 +3,19 @@
 
 This repository contains the code related to the paper      
 
-**Time series classification with random convolution kernels based transforms: pooling operators and input representations matter**
+**Time series classification with random convolution kernels: pooling operators and input representations matter**
 
-*Preprint*: [arxiv:2409.01115](https://arxiv.org/pdf/2409.01115)
+*Preprint*: [arxiv:2409.01115](https://arxiv.org/abs/2409.01115v2)
 
 > <div align="justify">This article presents a new approach based on MiniRocket, called SelF-Rocket, for fast time series classification (TSC). Unlike existing approaches based on random convolution kernels, it dynamically selects the best couple of input representations and pooling operator during the training process. SelF-Rocket achieves state-of-the-art accuracy on the University of California Riverside (UCR) TSC benchmark datasets.</div>
 
 ## Reference
 Please cite:
 ```
-@misc{lo2024timeseriesclassificationrandom,
-      title={Time series classification with random convolution kernels based transforms: pooling operators and input representations matter}, 
+@misc{lo2025timeseriesclassificationrandom,
+      title={Time series classification with random convolution kernels: pooling operators and input representations matter}, 
       author={Mouhamadou Mansour Lo and Gildas Morvan and Mathieu Rossi and Fabrice Morganti and David Mercier},
-      year={2024},
+      year={2025},
       eprint={2409.01115},
       archivePrefix={arXiv},
       primaryClass={cs.LG},
