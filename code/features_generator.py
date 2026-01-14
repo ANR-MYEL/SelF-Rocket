@@ -233,12 +233,12 @@ def transform(X, X1, parameters, parameters1, n_features_per_kernel=5):
                         max_stretch = 0.0
                         mean_index = 0
                         mean = 0
-                        gmp = np.NINF
+                        zero_count = 0
 
                         for j in range(C.shape[0]):
-                            val = C[j] + _bias
-                            if val > gmp :
-                                gmp = val
+                            if (j < C.shape[0] - 1 and ((C[j] > _bias and C[j + 1] < _bias)
+                                    or (C[j] < _bias and C[j + 1] > _bias))):
+                                zero_count += 1
                             if C[j] > _bias:
                                 ppv += 1
                                 mean_index += j
@@ -261,7 +261,7 @@ def transform(X, X1, parameters, parameters1, n_features_per_kernel=5):
                         end = end + num_features
                         features[example_index, end] = mean_index / ppv if ppv > 0 else -1
                         end = end + num_features
-                        features[example_index, end] = gmp
+                        features[example_index, end] = zero_count / C.shape[0]
                 else:
                     _c = C[padding:-padding]
 
@@ -274,12 +274,12 @@ def transform(X, X1, parameters, parameters1, n_features_per_kernel=5):
                         max_stretch = 0.0
                         mean_index = 0
                         mean = 0
-                        gmp = np.NINF
+                        zero_count = 0
 
                         for j in range(_c.shape[0]):
-                            val = _c[j] + _bias
-                            if val > gmp :
-                                gmp = val
+                            if (j < _c.shape[0] - 1 and ((_c[j] > _bias and _c[j + 1] < _bias)
+                                    or (_c[j] < _bias and _c[j + 1] > _bias))):
+                                zero_count += 1
                             if _c[j] > _bias:
                                 ppv += 1
                                 mean_index += j
@@ -302,7 +302,7 @@ def transform(X, X1, parameters, parameters1, n_features_per_kernel=5):
                         end = end + num_features
                         features[example_index, end] = mean_index / ppv if ppv > 0 else -1
                         end = end + num_features
-                        features[example_index, end] = gmp
+                        features[example_index, end] = zero_count / _c.shape[0]
 
                 feature_index_start = feature_index_end
 
@@ -366,12 +366,12 @@ def transform(X, X1, parameters, parameters1, n_features_per_kernel=5):
                         max_stretch = 0.0
                         mean_index = 0
                         mean = 0
-                        gmp = np.NINF
+                        zero_count = 0
 
                         for j in range(C.shape[0]):
-                            val = C[j] + _bias
-                            if val > gmp :
-                                gmp = val
+                            if (j < C.shape[0] - 1 and ((C[j] > _bias and C[j + 1] < _bias)
+                                    or (C[j] < _bias and C[j + 1] > _bias))):
+                                zero_count += 1
                             if C[j] > _bias:
                                 ppv += 1
                                 mean_index += j
@@ -394,7 +394,7 @@ def transform(X, X1, parameters, parameters1, n_features_per_kernel=5):
                         end = end + num_features
                         features[example_index, end] = mean_index / ppv if ppv > 0 else -1
                         end = end + num_features
-                        features[example_index, end] = gmp
+                        features[example_index, end] = zero_count / C.shape[0]
                 else:
                     _c = C[padding:-padding]
 
@@ -407,12 +407,12 @@ def transform(X, X1, parameters, parameters1, n_features_per_kernel=5):
                         max_stretch = 0.0
                         mean_index = 0
                         mean = 0
-                        gmp = np.NINF
+                        zero_count = 0
 
                         for j in range(_c.shape[0]):
-                            val = _c[j] + _bias
-                            if val > gmp :
-                                gmp = val
+                            if (j < _c.shape[0] - 1 and ((_c[j] > _bias and _c[j + 1] < _bias)
+                                    or (_c[j] < _bias and _c[j + 1] > _bias))):
+                                zero_count += 1
                             if _c[j] > _bias:
                                 ppv += 1
                                 mean_index += j
@@ -435,7 +435,7 @@ def transform(X, X1, parameters, parameters1, n_features_per_kernel=5):
                         end = end + num_features
                         features[example_index, end] = mean_index / ppv if ppv > 0 else -1
                         end = end + num_features
-                        features[example_index, end] = gmp
+                        features[example_index, end] = zero_count / _c.shape[0]
 
                 feature_index_start = feature_index_end
 

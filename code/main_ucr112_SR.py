@@ -41,7 +41,7 @@ if __name__ == '__main__':
         for j in tqdm(range(num_resamples)):
             X_train, y_train = load_from_ts_file(data_path+dst+'/'+dst+str(j)+'_TRAIN.ts')
             X_test, y_test = load_from_ts_file(data_path+dst+'/'+dst+str(j)+'_TEST.ts')
-            model = SelFRocket(num_runs,num_features_pc,only_MIX=bool_only_mix)
+            model = SelFRocket(num_runs = num_runs, num_features_pc = num_features_pc, only_MIX=bool_only_mix, num_kernels = 10000)
             model.fit(X_train,y_train)
             y_sr = model.predict(X_test)
             accuracy_SR = accuracy_score(y_test,y_sr)
